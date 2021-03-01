@@ -68,6 +68,8 @@
 	
 	<arg name="objects_input_topic" 		default="/detection/contour_tracker/objects" />
 
+	<arg name="control_frequency"			default="50.0" /> <!-- used in op_behavior_selector for the target velocity control delta time (dt) -->
+
 	<node pkg="op_local_planner" type="op_common_params" name="op_common_params" output="screen">	
 		<param name="mapSource" 				value="$(arg mapSource)" /> <!-- Autoware=0, Vector Map Folder=1, kml=2 -->
 		<param name="mapFileName" 				value="$(arg mapFileName)" />
@@ -122,6 +124,8 @@
 		<param name="vehicle_status_topic"		value="$(arg vehicle_status_topic)" />
 		<param name="experimentName" 			value="$(arg experimentName)" />	
 		<param name="objects_input_topic" 		value="$(arg objects_input_topic)" />	
+
+		<param name ="control_frequency"		value="$(arg control_frequency)" /> <!-- must be adjusted to /current_velocity input -->
 	</node>				
 			
 </launch>

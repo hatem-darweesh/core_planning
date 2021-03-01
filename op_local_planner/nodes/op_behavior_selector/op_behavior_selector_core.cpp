@@ -26,7 +26,12 @@ namespace BehaviorGeneratorNS
 
 BehaviorGen::BehaviorGen()
 {
-	m_ControlFrequency = 50;
+	// m_ControlFrequency = 50;
+	// make control frequency configureable, because it is related to the desired maximum velocity.
+	// The control frequency must be adapted to the message frequency of /current_velocity.
+	// If not, the control delta time (dt) for the calculation of the target acceleration is based
+	// on old velocity inputs and therefore, wrong.
+
 	bNewCurrentPos = false;
 	bVehicleStatus = false;
 	bNewLightStatus = false;
@@ -143,6 +148,8 @@ BehaviorGen::~BehaviorGen()
 
 void BehaviorGen::UpdatePlanningParams(ros::NodeHandle& _nh)
 {
+	_nh.getParam("/op_common_params/control_frequency", m_ControlFrequency);
+
 	_nh.getParam("/op_common_params/enableSwerving", m_PlanningParams.enableSwerving);
 	if(m_PlanningParams.enableSwerving)
 		m_PlanningParams.enableFollowing = true;
