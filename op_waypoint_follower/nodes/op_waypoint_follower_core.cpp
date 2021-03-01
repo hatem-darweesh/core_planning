@@ -147,7 +147,7 @@ void WaypointFollower::ReadParamFromLaunchFile(ros::NodeHandle& nh)
 	}
 
 
-	m_ControllerHyperParams.bEnableConstantVelocity = false; //only for testing
+	m_ControllerHyperParams.bEnableConstantVelocity = true; //only for testing
 	m_ControllerHyperParams.bEnableLogs = true;
 	m_ControllerHyperParams.bEnableCalibration = false;
 	m_ControllerHyperParams.bEnableVelocityFF = false;
@@ -479,9 +479,26 @@ void WaypointFollower::PathFollowingStep(double dt)
 	if(m_iSimulationMode == 2)
 	{
 		autoware_msgs::VehicleCmd cmd;
-		cmd.steer_cmd.steer = -m_curr_target_status.steer_torque;
-		cmd.accel_cmd.accel = m_curr_target_status.accel_stroke;
-		cmd.brake_cmd.brake = m_curr_target_status.brake_stroke;
+
+		// select lateral control mode
+		if (m_ControllerHyperParams.bEnableSteeringMode){
+			cmd.steer_cmd.steer = m_curr_target_status.steer*(180/3.141);
+		} 
+		else
+		{
+			cmd.steer_cmd.steer = -m_curr_target_status.steer_torque;
+		}
+
+		// select longitudinal control mode
+		if (m_ControllerHyperParams.bEnableVelocityMode){
+			cmd.ctrl_cmd.linear_velocity = m_curr_target_status.speed;
+		} 
+		else
+		{
+			cmd.accel_cmd.accel = m_curr_target_status.accel_stroke;
+			cmd.brake_cmd.brake = m_curr_target_status.brake_stroke;
+		}
+		
 		pub_VehicleCommandOP.publish(cmd);
 	}
 }
