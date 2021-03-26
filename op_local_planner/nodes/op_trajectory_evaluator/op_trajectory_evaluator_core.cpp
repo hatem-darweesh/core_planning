@@ -531,8 +531,18 @@ void TrajectoryEvalCore::MainLoop()
 						planningParams.minFollowingDistance += m_AdditionalFollowDistance;
 					}
 
-					PlannerHNS::TrajectoryCost tc = m_TrajectoryCostsCalculator.doOneStep(m_LanesRollOutsToUse.at(0), m_GlobalPathSections.at(0), m_CurrentPos,
-							planningParams, m_CarInfo,m_VehicleStatus, m_PredictedObjects, !m_bUseMoveingObjectsPrediction, m_CurrentBehavior.iTrajectory, m_bKeepCurrentIfPossible);
+					PlannerHNS::TrajectoryCost tc = 
+						m_TrajectoryCostsCalculator.doOneStep(m_LanesRollOutsToUse.at(0), 
+						m_GlobalPathSections.at(0), 
+						m_CurrentPos,
+						planningParams, 
+						m_CarInfo,
+						m_VehicleStatus, 
+						m_PredictedObjects, 
+						!m_bUseMoveingObjectsPrediction, 
+						m_CurrentBehavior.iTrajectory, 
+						m_bKeepCurrentIfPossible);
+
 					tcs.push_back(tc);
 
 					for(unsigned int i=0; i < m_TrajectoryCostsCalculator.local_roll_outs_.size(); i++)
@@ -544,7 +554,7 @@ void TrajectoryEvalCore::MainLoop()
 							lane.cost = m_TrajectoryCostsCalculator.trajectory_costs_.at(i).cost;
 							lane.is_blocked = m_TrajectoryCostsCalculator.trajectory_costs_.at(i).bBlocked;
 							lane.lane_index = local_lanes.lanes.size();
-							lane.lane_id = 0;
+							lane.lane_id = 0;					
 							local_lanes.lanes.push_back(lane);
 					}
 

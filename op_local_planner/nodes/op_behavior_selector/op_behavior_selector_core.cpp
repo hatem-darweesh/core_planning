@@ -570,7 +570,7 @@ bool BehaviorGen::CompareTrajectoriesWithIds(std::vector<std::vector<PlannerHNS:
 //----------------------------
 void BehaviorGen::callbackGetTrafficLightStatus(const autoware_msgs::TrafficLight& msg)
 {
-	std::cout << "Received Traffic Light Status : " << msg.traffic_light << std::endl;
+	// std::cout << "Received Traffic Light Status : " << msg.traffic_light << std::endl;
 	bNewLightStatus = true;
 	if(msg.traffic_light == 1) // green
 		m_CurrLightStatus = PlannerHNS::GREEN_LIGHT;
@@ -926,8 +926,23 @@ void BehaviorGen::MainLoop()
 			m_BehaviorGenerator.UpdateAvoidanceParams(m_PlanningParams.enableSwerving, m_PlanningParams.rollOutNumber);
 #endif
 
-			m_CurrentBehavior = m_BehaviorGenerator.DoOneStep(avg_dt, m_CurrentPos, m_VehicleStatus, m_CurrTrafficLight, m_TrajectoryBestCost, 0 );
+			// --- find boundary/area ---
+			bool bInsideIntersection = false;
+			int currentLaneID = m_BehaviorGenerator.m_LanesRollOuts.at(0).at(0).at(0).laneId;
+			for (int iter = 0; iter<m_Map.roadSegments.at(0).Lanes.size(); iter++)
+			// iterate torugh all lanes inside the map
+			{
+				if (m_Map.roadSegments.at(0).Lanes.at(iter).id == currentLaneID)
+				// find the lane, the vehicle is using
+				{
+					m_CurrentPos.boundaryId = m_Map.roadSegments.at(0).Lanes.at(iter).points.at(0).boundaryId;
+					// assign the boundary our acutal lanes is starting in (prone to errors if lane does not start 
+					// inside the boudary!!!)
+				} 
+			}
 
+			m_CurrentBehavior = m_BehaviorGenerator.DoOneStep(avg_dt, m_CurrentPos, m_VehicleStatus, m_CurrTrafficLight, m_TrajectoryBestCost, 0 );
+			
 			if(m_bShowActualDrivingPath)
 			{
 				InsertNewActualPathPair();
