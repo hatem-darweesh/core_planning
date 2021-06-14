@@ -25,6 +25,7 @@
 #include <geometry_msgs/PoseArray.h>
 #include <nav_msgs/Odometry.h>
 #include <autoware_msgs/LaneArray.h>
+#include <autoware_msgs/LaneArrayStamped.h>
 #include <autoware_msgs/VehicleStatus.h>
 #include <autoware_can_msgs/CANInfo.h>
 

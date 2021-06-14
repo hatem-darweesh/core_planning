@@ -25,6 +25,7 @@
 #include <geometry_msgs/PoseArray.h>
 #include <nav_msgs/Odometry.h>
 #include <autoware_msgs/LaneArray.h>
+#include <autoware_msgs/LaneArrayStamped.h>
 #include <autoware_can_msgs/CANInfo.h>
 #include <autoware_msgs/DetectedObjectArray.h>
 #include <autoware_msgs/VehicleStatus.h>
@@ -59,6 +60,7 @@ protected:
 	std::vector<std::vector<PlannerHNS::WayPoint> > m_GlobalPaths;
 	std::vector<std::vector<PlannerHNS::WayPoint> > m_GlobalPathsToUse;
 	std::vector<std::vector<PlannerHNS::WayPoint> > m_GlobalPathSections;
+        ros::Time path_stamp;
 	std::vector<int> m_prev_index;
 	std::vector<PlannerHNS::WayPoint> t_centerTrajectorySmoothed;
 	bool bEnableSmoothGlobalPathForCARLA;
@@ -115,7 +117,7 @@ protected:
 	void callbackGetRobotOdom(const nav_msgs::OdometryConstPtr& msg);
 	void callbackGetVehicleStatus(const autoware_msgs::VehicleStatusConstPtr & msg);
 	void callbackGetGlobalPlannerPath(const autoware_msgs::LaneArrayConstPtr& msg);
-	void callbackGetLocalPlannerPath(const autoware_msgs::LaneArrayConstPtr& msg);
+	void callbackGetLocalPlannerPath(const autoware_msgs::LaneArrayStampedConstPtr& msg);
 	void callbackGetPredictedObjects(const autoware_msgs::DetectedObjectArrayConstPtr& msg);
 	void callbackGetTrajectoryInforFromBehaviorSelector(const std_msgs::Int32MultiArrayConstPtr& msg);
 

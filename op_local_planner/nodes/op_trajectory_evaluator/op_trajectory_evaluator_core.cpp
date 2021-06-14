@@ -43,7 +43,7 @@ TrajectoryEvalCore::TrajectoryEvalCore()
 
 	pub_CollisionPointsRviz = nh.advertise<visualization_msgs::MarkerArray>("dynamic_collision_points_rviz", 1);
 	pub_LocalWeightedTrajectoriesRviz = nh.advertise<visualization_msgs::MarkerArray>("local_trajectories_eval_rviz", 1);
-	pub_LocalWeightedTrajectories = nh.advertise<autoware_msgs::LaneArray>("local_weighted_trajectories", 1);
+	pub_LocalWeightedTrajectories = nh.advertise<autoware_msgs::LaneArrayStamped>("local_weighted_trajectories", 1);
 	pub_TrajectoryCost = nh.advertise<autoware_msgs::Lane>("local_trajectory_cost", 1);
 	pub_SafetyBorderRviz = nh.advertise<visualization_msgs::Marker>("safety_border", 1);
 
@@ -281,6 +281,7 @@ void TrajectoryEvalCore::callbackGetGlobalPlannerPath(const autoware_msgs::LaneA
 				for(unsigned int i = 0; i < m_GlobalPaths.size(); i++)
 				{
 					PlannerHNS::PlanningHelpers::CalcAngleAndCost(m_GlobalPaths.at(i));
+					PlannerHNS::PlanningHelpers::CalcAngleAndCost(m_GlobalPaths.at(i));
 				}
 			}
 			std::cout << "Received New Global Paths Evaluator ! " << m_GlobalPaths.size() << std::endl;
@@ -288,12 +289,13 @@ void TrajectoryEvalCore::callbackGetGlobalPlannerPath(const autoware_msgs::LaneA
 	}
 }
 
-void TrajectoryEvalCore::callbackGetLocalPlannerPath(const autoware_msgs::LaneArrayConstPtr& msg)
+void TrajectoryEvalCore::callbackGetLocalPlannerPath(const autoware_msgs::LaneArrayStampedConstPtr& msg)
 {
 	if(msg->lanes.size() > 0)
 	{
 		std::vector< std::vector<PlannerHNS::WayPoint> > received_local_rollouts;
 		std::vector<int> globalPathsId_roll_outs;
+                path_stamp = msg->header.stamp;
 
 		for(unsigned int i = 0 ; i < msg->lanes.size(); i++)
 		{
@@ -515,7 +517,7 @@ void TrajectoryEvalCore::MainLoop()
 
 			if(m_GlobalPathSections.size() > 0 && m_LanesRollOutsToUse.size() > 0)
 			{
-				autoware_msgs::LaneArray local_lanes;
+				autoware_msgs::LaneArrayStamped local_lanes;
 				std::vector<PlannerHNS::TrajectoryCost> tcs;
 				visualization_msgs::Marker safety_box;
 				std::vector<PlannerHNS::WayPoint> collision_points;
@@ -631,6 +633,7 @@ void TrajectoryEvalCore::MainLoop()
 						l.lane_id = best_lane_costs.lane_index;
 
 						pub_TrajectoryCost.publish(l);
+                                                local_lanes.header.stamp = path_stamp;
 						pub_LocalWeightedTrajectories.publish(local_lanes);
 
 						//Visualize results
