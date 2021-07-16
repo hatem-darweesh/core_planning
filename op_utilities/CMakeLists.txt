@@ -6,6 +6,7 @@ find_package(autoware_build_flags REQUIRED)
 find_package(
   catkin REQUIRED COMPONENTS		
     roscpp
+    std_msgs
     autoware_msgs
     autoware_can_msgs
     geometry_msgs  	
@@ -114,3 +115,11 @@ install(
   DIRECTORY launch/
   DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}/launch
 )
+
+install(FILES nodes/op_blinker_propagation/op_blinker_propagation.py
+        DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION})
+
+install(FILES nodes/op_blinker_propagation/op_blinker_propagation.py
+        DESTINATION ${CATKIN_PACKAGE_SHARE_DESTINATION}
+        PERMISSIONS OWNER_EXECUTE OWNER_WRITE OWNER_READ
+        GROUP_EXECUTE GROUP_READ)
